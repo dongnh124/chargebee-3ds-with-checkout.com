@@ -1,19 +1,9 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios'
 
-axios.defaults.headers.post[ 'Content-Type' ] = 'application/x-www-form-urlencoded';
-
-const urlEncode = function (data) {
-  var str = [];
-  for (var p in data) {
-    if (data.hasOwnProperty(p) && (!(data[ p ] == undefined || data[ p ] == null))) {
-      str.push(encodeURIComponent(p) + "=" + (data[ p ] ? encodeURIComponent(data[ p ]) : ""));
-    }
-  }
-  return str.join("&");
-}
+const chargebee_customer_email = 'my_customer_email8975@hospopay.com'
 
 const App = () => {
   const [ cbInstance, setCbInstance ] = useState({})
@@ -51,12 +41,20 @@ const App = () => {
             throw Error('Card details are invalid');
           }
 
-          const paymentIntentInit = await axios.post("http://localhost:8000/api/generate_payment_intent",
-            urlEncode({ amount: 3001 })
-          )
+          const paymentIntentInit = await axios.post("http://localhost:8000/api/generate_payment_intent")
 
           const additionalData = {
-            plan: 'cbdemo_premium-USD-monthly',
+            billingAddress: {
+              firstName: "John",
+              lastName: "Doe",
+              addressLine1: "1600 Amphitheatre Parkway",
+              city: "Mountain View",
+              state: "California",
+              stateCode: "CA",
+              zip: "94039",
+              countryCode: "US",
+            },
+            email: chargebee_customer_email,
           }
           const callbacks = {
             change: () => {
@@ -71,13 +69,18 @@ const App = () => {
           }
 
           const paymentIntentResponse = await cardComponent.authorizeWith3ds(paymentIntentInit.data, additionalData, callbacks)
+          console.log('paymentIntentResponse-701563', paymentIntentResponse)
 
           // Send ajax call to create a subscription or to create a card payment source using the paymentIntent ID
           await axios.post("http://localhost:8000/api/create_subscriptions",
-            urlEncode({ paymentIntent: paymentIntentResponse.data })
+            { paymentIntent: {
+              id: paymentIntentResponse.id,
+            } }
           )
         } catch (err) {
           error.innerHTML = JSON.stringify(err.message, undefined, 2);
+        }
+        finally {
           setLoading(false)
         }
       })
