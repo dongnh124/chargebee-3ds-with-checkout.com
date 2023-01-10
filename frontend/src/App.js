@@ -77,6 +77,7 @@ const App = () => {
               id: paymentIntentResponse.id,
             } }
           )
+          error.innerHTML = "SUCCESS";
         } catch (err) {
           error.innerHTML = JSON.stringify(err.message, undefined, 2);
         }
@@ -97,9 +98,11 @@ const App = () => {
         <h1>Demo valid card</h1>
         <p>"name": Valid Card</p>
         <p>"number": 4242 4242 4242 4242</p>
+        <p>or: 5352 1515 7000 3404</p>
         <p>"exp_month": 12,</p>
         <p>"exp_year": 2029</p>
         <p>"cvv": 100</p>
+        <p>"Code 3ds": Checkout1!</p>
       </div>
       <div className="bodyContainer">
         <div className="ex1-wrap">
