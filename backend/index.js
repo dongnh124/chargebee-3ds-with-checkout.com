@@ -27,6 +27,7 @@ app.post('/api/generate_payment_intent', (req, res) => {
           res.status(error.http_status_code || 500);
           res.json(error);
       } else {
+          console.log('result.payment_intent-240302', result.payment_intent)
           res.json(result.payment_intent);
       }
   });
@@ -46,6 +47,7 @@ app.post('/api/create_subscriptions', (req, res) => {
           res.status(error.http_status_code || 500);
           res.json(error);
       } else {
+          console.log('result-179916', result)
           res.json(result);
       }
   });
