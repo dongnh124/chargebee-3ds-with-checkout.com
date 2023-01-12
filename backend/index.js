@@ -11,7 +11,8 @@ const app = express()
 app.use(json())
 app.use(cors())
 
-const chargebee_customer_id = 'dadc0be2-d88d-4251-b6b9-40548c3e2f61'
+const chargebee_customer_id = '509e18ad-ec81-4791-9bab-cbc66aa69b38'
+const chargebee_customer_email = 'my_customer_email8323@hospopay.com'
 const checkout_gateway = "gw_169lqeTQi28aa2R78";
 
 app.post('/api/generate_payment_intent', (req, res) => {
@@ -40,6 +41,32 @@ app.post('/api/create_subscriptions', (req, res) => {
     {
       item_price_id : "Trial-USD-Weekly",
     }],
+  })
+  .request(function(error,result) {
+      if(error){
+          console.log('error-342342', error)
+          res.status(error.http_status_code || 500);
+          res.json(error);
+      } else {
+          console.log('result-179916', result)
+          res.json(result);
+      }
+  });
+});
+
+app.post('/api/create_hosted_page', (req, res) => {
+  chargebee.hosted_page.checkout_new_for_items({
+    subscription_items : [
+    {
+      item_price_id : "Trial-USD-Weekly",
+    }],
+    customer: {
+      id: chargebee_customer_id,
+      email: chargebee_customer_email,
+    },
+    card: {
+      gateway_account_id: checkout_gateway,
+    },
   })
   .request(function(error,result) {
       if(error){
